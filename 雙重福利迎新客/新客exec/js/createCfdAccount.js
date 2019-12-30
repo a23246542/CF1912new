@@ -509,10 +509,11 @@ var createCfdAccount = {
         return result;
     },
     showerrorMsg:function(){
+        // 如果有回传东西手机号就是已存在 564
         if(cookieInfo.getCookie("errorphone")!=null&&cookieInfo.getCookie("errorphone")!=""){
             $(".errortipinfo").html("手机号已存在，请重新注册！");
         }
-        cookieInfo.delCookie("errorphone");
+        cookieInfo.delCookie("errorphone");//有回传 cookie也重新设定
     },
     checkCustomerByPhone:function (phone,isDemo) {
         var result;
@@ -521,7 +522,7 @@ var createCfdAccount = {
             url : apiUrl + "/public/cfd/account/checkCustomerByPhone",
             data : {phone:phone,isDemo:isDemo,url:window.location.href},
             async : false,
-            success : function(data) {
+            success : function(data){
                 result = data;
             },
             error : function(jqXHR, textStatus, errorThrown) {
@@ -561,18 +562,20 @@ var cookieInfo = {
 		    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
 	    },
 	    getCookie:function(name){
-		    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+            var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+            // 如果cookie有errorphone 回传字串
 		    if(arr=document.cookie.match(reg))
 		    return unescape(arr[2]);
 		    else
 		    return null;
 	    },
-	    delCookie:function(name){
+	    delCookie:function(name){ //传入errorphone字串
 		    var exp = new Date();
-		    exp.setTime(exp.getTime() - 1);
+            exp.setTime(exp.getTime() - 1);
+            // get cookie有回传东西 表示手机已存在 重新设定cookie
 		    var cval=cookieInfo.getCookie(name);
 		    if(cval!=null)
-		    document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+		    document.cookie= name + "="+cval+";expires="+exp.toGMTString();//
 	    }
 			
 	}
